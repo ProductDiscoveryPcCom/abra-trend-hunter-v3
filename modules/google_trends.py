@@ -428,6 +428,9 @@ def calculate_seasonality(timeline_data: list) -> dict:
             "explanation": "Datos insuficientes para análisis estacional"
         }
     
+    from datetime import datetime
+    import re
+    
     # Agrupar valores por mes
     monthly_values = {}
     
@@ -436,20 +439,46 @@ def calculate_seasonality(timeline_data: list) -> dict:
         if not date_str:
             continue
         
+        # Limpiar rangos de fecha
+        if " – " in date_str:
+            date_str = date_str.split(" – ")[0]
+        if " - " in date_str:
+            date_str = date_str.split(" - ")[0]
+        date_str = date_str.strip()
+        
         # Intentar extraer mes
         month = None
-        try:
-            # Formato "Jan 2024" o similar
-            for fmt in ["%b %Y", "%B %Y", "%b %d, %Y"]:
-                try:
-                    from datetime import datetime
-                    dt = datetime.strptime(date_str.split(" – ")[0], fmt)
-                    month = dt.month
-                    break
-                except:
-                    continue
-        except:
-            continue
+        
+        # Intentar múltiples formatos
+        formats_to_try = [
+            "%b %d, %Y",      # Nov 3, 2024
+            "%B %d, %Y",      # November 3, 2024
+            "%b %Y",          # Nov 2024
+            "%B %Y",          # November 2024
+            "%Y-%m-%d",       # 2024-11-03
+            "%d/%m/%Y",       # 03/11/2024
+            "%d %b %Y",       # 03 Nov 2024
+        ]
+        
+        for fmt in formats_to_try:
+            try:
+                dt = datetime.strptime(date_str, fmt)
+                month = dt.month
+                break
+            except ValueError:
+                continue
+        
+        # Fallback: extraer mes con regex
+        if month is None:
+            month_map = {
+                'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+                'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+                'ene': 1, 'abr': 4, 'ago': 8, 'dic': 12
+            }
+            match = re.search(r'(\w{3,})\s+\d', date_str.lower())
+            if match:
+                month_str = match.group(1)[:3]
+                month = month_map.get(month_str)
         
         if month is None:
             continue

@@ -39,24 +39,55 @@ def render_trend_chart(
         if "date" in point and "values" in point and len(point["values"]) > 0:
             # Parsear fecha
             date_str = point["date"]
+            
+            # Limpiar rangos de fecha (tomar inicio)
             if " – " in date_str:
                 date_str = date_str.split(" – ")[0]
+            if " - " in date_str:
+                date_str = date_str.split(" - ")[0]
             
-            try:
-                for fmt in ["%b %d, %Y", "%b %Y", "%Y-%m-%d", "%d/%m/%Y"]:
-                    try:
-                        date = datetime.strptime(date_str, fmt)
-                        break
-                    except:
-                        continue
-                else:
+            date_str = date_str.strip()
+            date = None
+            
+            # Intentar múltiples formatos
+            formats_to_try = [
+                "%b %d, %Y",      # Nov 3, 2024
+                "%B %d, %Y",      # November 3, 2024
+                "%b %Y",          # Nov 2024
+                "%B %Y",          # November 2024
+                "%Y-%m-%d",       # 2024-11-03
+                "%d/%m/%Y",       # 03/11/2024
+                "%m/%d/%Y",       # 11/03/2024
+                "%d %b %Y",       # 03 Nov 2024
+                "%d %B %Y",       # 03 November 2024
+            ]
+            
+            for fmt in formats_to_try:
+                try:
+                    date = datetime.strptime(date_str, fmt)
+                    break
+                except ValueError:
                     continue
-                    
+            
+            if date is None:
+                # Intentar extraer año y mes con regex como fallback
+                import re
+                match = re.search(r'(\w+)\s+(\d{4})', date_str)
+                if match:
+                    month_str, year = match.groups()
+                    month_map = {
+                        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+                        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+                        'ene': 1, 'abr': 4, 'ago': 8, 'dic': 12
+                    }
+                    month_num = month_map.get(month_str[:3].lower())
+                    if month_num:
+                        date = datetime(int(year), month_num, 1)
+            
+            if date:
                 dates.append(date)
                 val = point["values"][0].get("extracted_value", 0)
                 values.append(float(val) if val else 0)
-            except:
-                continue
     
     if not dates or not values:
         st.warning("No se pudieron procesar los datos")

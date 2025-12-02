@@ -378,12 +378,12 @@ def render_lifecycle_chart(products: List) -> None:
         showlegend=False
     ))
     
-    # Zonas de color
+    # Zonas de color (usando rgba para compatibilidad)
     zones = [
-        (0, 20, "#10B98120", "🌱 Lanzamiento"),
-        (20, 40, "#F59E0B20", "📈 Crecimiento"),
-        (40, 70, "#3B82F620", "🏔️ Madurez"),
-        (70, 100, "#EF444420", "📉 Declive")
+        (0, 20, "rgba(16, 185, 129, 0.12)", "🌱 Lanzamiento"),
+        (20, 40, "rgba(245, 158, 11, 0.12)", "📈 Crecimiento"),
+        (40, 70, "rgba(59, 130, 246, 0.12)", "🏔️ Madurez"),
+        (70, 100, "rgba(239, 68, 68, 0.12)", "📉 Declive")
     ]
     
     for x0, x1, color, label in zones:
@@ -619,13 +619,29 @@ def _create_sparkline(values: List[float], color: str = "#7C3AED") -> go.Figure:
     if not values:
         values = [0]
     
+    # Convertir hex a rgba para el fill
+    def hex_to_rgba(hex_color: str, alpha: float = 0.2) -> str:
+        """Convierte color hex a rgba"""
+        hex_color = hex_color.lstrip('#')
+        if len(hex_color) != 6:
+            return f"rgba(124, 58, 237, {alpha})"  # Default purple
+        try:
+            r = int(hex_color[0:2], 16)
+            g = int(hex_color[2:4], 16)
+            b = int(hex_color[4:6], 16)
+            return f"rgba({r}, {g}, {b}, {alpha})"
+        except ValueError:
+            return f"rgba(124, 58, 237, {alpha})"
+    
+    fill_color = hex_to_rgba(color, 0.2)
+    
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         y=values,
         mode='lines',
         line=dict(color=color, width=2),
         fill='tozeroy',
-        fillcolor=f'{color}20',
+        fillcolor=fill_color,
         hoverinfo='skip'
     ))
     
