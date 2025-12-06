@@ -1,0 +1,162 @@
+# =============================================================================
+# PATRONES DE DETECCIÓN: GPUs y TARJETAS GRÁFICAS
+# =============================================================================
+# 
+# Objetivo: Detectar modelos específicos de GPUs en títulos y descripciones
+# de videos de YouTube para identificar productos emergentes.
+#
+# Estructura de cada patrón:
+#   - regex: Expresión regular (case insensitive)
+#   - examples: Ejemplos de lo que debería detectar
+#   - priority: 1 (alta) a 3 (baja) - para resolver conflictos
+#   - brand: Marca asociada (para estadísticas)
+#
+# IMPORTANTE: Los patrones están ordenados de más específico a más general
+# para evitar falsos positivos.
+# =============================================================================
+
+category: "GPU"
+description: "Tarjetas gráficas de escritorio y portátil"
+last_updated: "2024-12-04"
+
+patterns:
+
+  # ---------------------------------------------------------------------------
+  # NVIDIA - Serie RTX 50 (Nueva generación - PRIORIDAD MÁXIMA)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(RTX)\s*(50[89]0|5070|5060)\s*(Ti|SUPER|Ti\s*SUPER)?\b'
+    examples: ["RTX 5090", "RTX 5080", "RTX 5080 Ti", "RTX 5070 SUPER"]
+    priority: 1
+    brand: "NVIDIA"
+    generation: "Blackwell"
+    notes: "Nueva generación 2025 - máxima prioridad de detección"
+
+  # ---------------------------------------------------------------------------
+  # NVIDIA - Serie RTX 40 (Generación actual)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(RTX)\s*(40[89]0|4070|4060)\s*(Ti|SUPER|Ti\s*SUPER)?\b'
+    examples: ["RTX 4090", "RTX 4080 SUPER", "RTX 4070 Ti SUPER", "RTX 4060 Ti"]
+    priority: 1
+    brand: "NVIDIA"
+    generation: "Ada Lovelace"
+
+  - regex: '\b(RTX)\s*(4050)\b'
+    examples: ["RTX 4050"]
+    priority: 1
+    brand: "NVIDIA"
+    generation: "Ada Lovelace"
+    notes: "Versión portátil principalmente"
+
+  # ---------------------------------------------------------------------------
+  # NVIDIA - Serie RTX 30 (Generación anterior)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(RTX)\s*(30[89]0|3070|3060|3050)\s*(Ti)?\b'
+    examples: ["RTX 3090", "RTX 3080 Ti", "RTX 3070", "RTX 3060 Ti", "RTX 3050"]
+    priority: 2
+    brand: "NVIDIA"
+    generation: "Ampere"
+
+  # ---------------------------------------------------------------------------
+  # NVIDIA - Serie GTX (Legacy pero aún relevante)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(GTX)\s*(16[58]0|1650|1630)\s*(Ti|SUPER)?\b'
+    examples: ["GTX 1660 SUPER", "GTX 1650", "GTX 1630"]
+    priority: 2
+    brand: "NVIDIA"
+    generation: "Turing"
+
+  - regex: '\b(GTX)\s*(10[87]0|1060|1050)\s*(Ti)?\b'
+    examples: ["GTX 1080 Ti", "GTX 1070", "GTX 1060", "GTX 1050 Ti"]
+    priority: 3
+    brand: "NVIDIA"
+    generation: "Pascal"
+    notes: "Legacy - solo detectar si es tendencia retro"
+
+  # ---------------------------------------------------------------------------
+  # AMD - Serie RX 9000 (Nueva generación - PRIORIDAD MÁXIMA)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(RX)\s*(9[0-9]{3})\s*(XT|XTX)?\b'
+    examples: ["RX 9800", "RX 9700 XT", "RX 9600"]
+    priority: 1
+    brand: "AMD"
+    generation: "RDNA 4"
+    notes: "Nueva generación 2025 - máxima prioridad"
+
+  # ---------------------------------------------------------------------------
+  # AMD - Serie RX 7000 (Generación actual)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(RX)\s*(7[0-9]{3})\s*(XT|XTX|GRE)?\b'
+    examples: ["RX 7900 XTX", "RX 7900 XT", "RX 7800 XT", "RX 7700 XT", "RX 7600", "RX 7900 GRE"]
+    priority: 1
+    brand: "AMD"
+    generation: "RDNA 3"
+
+  # ---------------------------------------------------------------------------
+  # AMD - Serie RX 6000 (Generación anterior)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(RX)\s*(6[0-9]{3})\s*(XT|XTX)?\b'
+    examples: ["RX 6950 XT", "RX 6900 XT", "RX 6800 XT", "RX 6700 XT", "RX 6600", "RX 6500 XT"]
+    priority: 2
+    brand: "AMD"
+    generation: "RDNA 2"
+
+  # ---------------------------------------------------------------------------
+  # Intel Arc (Relativamente nuevo - importante detectar)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Arc)\s*(A[0-9]{3}[M]?|B[0-9]{3})\b'
+    examples: ["Arc A770", "Arc A750", "Arc A580", "Arc A380", "Arc B580"]
+    priority: 1
+    brand: "Intel"
+    generation: "Alchemist/Battlemage"
+    notes: "Intel entrando en mercado discreto - importante monitorear"
+
+  - regex: '\b(Intel)\s*(Arc)\s*(A[0-9]{3}[M]?|B[0-9]{3})\b'
+    examples: ["Intel Arc A770", "Intel Arc B580"]
+    priority: 1
+    brand: "Intel"
+    generation: "Alchemist/Battlemage"
+
+  # ---------------------------------------------------------------------------
+  # Marcas de ensambladores (AIB Partners) - Modelos específicos
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Founders\s*Edition|FE)\b'
+    examples: ["RTX 4090 Founders Edition", "4080 FE"]
+    priority: 2
+    brand: "NVIDIA"
+    notes: "Referencia de NVIDIA"
+
+  - regex: '\b(STRIX|TUF|DUAL|PRIME)\s*(OC)?\b'
+    examples: ["STRIX RTX 4090 OC", "TUF RX 7900 XTX"]
+    priority: 3
+    brand: "ASUS"
+    notes: "Líneas de ASUS"
+
+  - regex: '\b(SUPRIM|GAMING\s*[XZ]|VENTUS)\b'
+    examples: ["SUPRIM X", "GAMING X TRIO", "VENTUS 3X"]
+    priority: 3
+    brand: "MSI"
+
+  - regex: '\b(AORUS|EAGLE|WINDFORCE|GAMING\s*OC)\b'
+    examples: ["AORUS MASTER", "EAGLE OC", "WINDFORCE"]
+    priority: 3
+    brand: "Gigabyte"
+
+  - regex: '\b(Nitro\+?|Pulse|TOXIC)\b'
+    examples: ["Nitro+ RX 7900 XTX", "Pulse RX 7600"]
+    priority: 3
+    brand: "Sapphire"
+    notes: "Solo AMD"
+
+  - regex: '\b(Red\s*Devil|Hellhound|Fighter)\b'
+    examples: ["Red Devil RX 7900 XTX", "Hellhound"]
+    priority: 3
+    brand: "PowerColor"
+    notes: "Solo AMD"
+
+# ---------------------------------------------------------------------------
+# Patrones de EXCLUSIÓN (evitar falsos positivos)
+# ---------------------------------------------------------------------------
+exclusions:
+  - 'RX\s*[0-9]{1,2}\b'  # Evitar "RX 7" solo (auriculares, etc.)
+  - 'GTX\s*[0-9]{1,2}\b'
+  - '\bARC\s*(reactor|welder|mouse)\b'  # Evitar otros productos "Arc"

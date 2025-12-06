@@ -1,0 +1,227 @@
+# =============================================================================
+# SEÑALES DE INTENCIÓN DE COMPRA: ESPAÑA 🇪🇸
+# =============================================================================
+#
+# Mercado principal de PCComponentes
+# Incluye: retailers, frases de compra, señales de disponibilidad
+#
+# =============================================================================
+
+country_code: "ES"
+country_name: "España"
+language: "es"
+priority: 1  # Mercado principal
+last_updated: "2024-12-04"
+
+# ---------------------------------------------------------------------------
+# RETAILERS Y TIENDAS
+# ---------------------------------------------------------------------------
+retailers:
+  
+  # Tier 1: Retailers principales de tecnología
+  tier1:
+    - pattern: '\b(pccomponentes|pc\s*componentes)\b'
+      name: "PCComponentes"
+      type: "specialist"
+      notes: "Retailer principal - competencia directa"
+    
+    - pattern: '\b(amazon\.es|amazon\s*españa)\b'
+      name: "Amazon España"
+      type: "marketplace"
+      notes: "Marketplace dominante"
+    
+    - pattern: '\b(mediamarkt|media\s*markt)\b'
+      name: "MediaMarkt"
+      type: "electronics"
+    
+    - pattern: '\b(el\s*corte\s*ingl[eé]s|eci)\b'
+      name: "El Corte Inglés"
+      type: "department"
+    
+    - pattern: '\b(worten)\b'
+      name: "Worten"
+      type: "electronics"
+      notes: "Fuerte en electrodomésticos"
+    
+    - pattern: '\b(fnac)\b'
+      name: "FNAC"
+      type: "electronics"
+
+  # Tier 2: Retailers especializados
+  tier2:
+    - pattern: '\b(coolmod)\b'
+      name: "Coolmod"
+      type: "specialist"
+      notes: "Competencia directa en hardware"
+    
+    - pattern: '\b(versus\s*gamers)\b'
+      name: "Versus Gamers"
+      type: "gaming"
+    
+    - pattern: '\b(aussar)\b'
+      name: "Aussar"
+      type: "specialist"
+    
+    - pattern: '\b(neobyte)\b'
+      name: "Neobyte"
+      type: "specialist"
+    
+    - pattern: '\b(vsgamers)\b'
+      name: "VS Gamers"
+      type: "gaming"
+    
+    - pattern: '\b(life\s*informatica|lifeinformatica)\b'
+      name: "Life Informática"
+      type: "specialist"
+
+  # Tier 3: Marketplaces y otros
+  tier3:
+    - pattern: '\b(aliexpress)\b'
+      name: "AliExpress"
+      type: "china_marketplace"
+      notes: "Importante para productos chinos"
+    
+    - pattern: '\b(wallapop)\b'
+      name: "Wallapop"
+      type: "secondhand"
+    
+    - pattern: '\b(carrefour)\b'
+      name: "Carrefour"
+      type: "hypermarket"
+    
+    - pattern: '\b(alcampo)\b'
+      name: "Alcampo"
+      type: "hypermarket"
+
+# ---------------------------------------------------------------------------
+# FRASES DE INTENCIÓN DE COMPRA
+# ---------------------------------------------------------------------------
+buying_phrases:
+
+  # Dónde comprar
+  where_to_buy:
+    - pattern: '\b(d[oó]nde\s*comprar|donde\s*comprar)\b'
+      signal_strength: "high"
+    - pattern: '\b(d[oó]nde\s*lo\s*compro|donde\s*lo\s*compro)\b'
+      signal_strength: "high"
+    - pattern: '\b(mejor\s*sitio\s*para\s*comprar)\b'
+      signal_strength: "high"
+    - pattern: '\b(mejor\s*tienda\s*para)\b'
+      signal_strength: "medium"
+    - pattern: '\b(d[oó]nde\s*lo\s*venden)\b'
+      signal_strength: "high"
+    - pattern: '\b(en\s*qu[eé]\s*tienda)\b'
+      signal_strength: "medium"
+    - pattern: '\b(disponible\s*en\s*espa[nñ]a)\b'
+      signal_strength: "high"
+    - pattern: '\b(comprar\s*en\s*espa[nñ]a)\b'
+      signal_strength: "high"
+    - pattern: '\b(traer\s*de\s*china)\b'
+      signal_strength: "medium"
+      notes: "Interés en importar"
+
+  # Precio
+  price_related:
+    - pattern: '\b(cu[aá]nto\s*cuesta|cuanto\s*cuesta)\b'
+      signal_strength: "high"
+    - pattern: '\b(precio\s*en\s*espa[nñ]a)\b'
+      signal_strength: "high"
+    - pattern: '\b(merece\s*la\s*pena)\b'
+      signal_strength: "medium"
+    - pattern: '\b(vale\s*la\s*pena)\b'
+      signal_strength: "medium"
+    - pattern: '\b(relaci[oó]n\s*calidad\s*precio)\b'
+      signal_strength: "medium"
+    - pattern: '\b(barato|econ[oó]mico|asequible)\b'
+      signal_strength: "low"
+    - pattern: '\b([0-9]+\s*€|€\s*[0-9]+|euros)\b'
+      signal_strength: "low"
+    - pattern: '\b(oferta|descuento|rebaja)\b'
+      signal_strength: "low"
+    - pattern: '\b(black\s*friday|prime\s*day)\b'
+      signal_strength: "low"
+      notes: "Esperando ofertas"
+
+  # Disponibilidad
+  availability:
+    - pattern: '\b(hay\s*stock|en\s*stock)\b'
+      signal_strength: "high"
+    - pattern: '\b(disponible|disponibilidad)\b'
+      signal_strength: "medium"
+    - pattern: '\b(agotado|sin\s*stock|out\s*of\s*stock)\b'
+      signal_strength: "high"
+      notes: "Señal de alta demanda"
+    - pattern: '\b(cu[aá]ndo\s*llega|cuando\s*llega)\b'
+      signal_strength: "high"
+    - pattern: '\b(fecha\s*de\s*lanzamiento)\b'
+      signal_strength: "medium"
+    - pattern: '\b(ya\s*a\s*la\s*venta|ya\s*disponible)\b'
+      signal_strength: "medium"
+    - pattern: '\b(reserva|pre-?order|preventa)\b'
+      signal_strength: "high"
+    - pattern: '\b(env[ií]o\s*a\s*espa[nñ]a)\b'
+      signal_strength: "high"
+
+  # Comparativa/Decisión
+  decision_making:
+    - pattern: '\b(cu[aá]l\s*comprar|cual\s*comprar)\b'
+      signal_strength: "high"
+    - pattern: '\b(qu[eé]\s*comprar|que\s*comprar)\b'
+      signal_strength: "high"
+    - pattern: '\b(mejor\s*opci[oó]n|mejor\s*alternativa)\b'
+      signal_strength: "medium"
+    - pattern: '\b(vs|versus|contra|o\s+el)\b'
+      signal_strength: "low"
+      notes: "Comparando opciones"
+    - pattern: '\b(recomend[aá]is|recomendais|aconsej[aá]is)\b'
+      signal_strength: "high"
+    - pattern: '\b(opiniones|experiencias)\b'
+      signal_strength: "medium"
+    - pattern: '\b(debería\s*comprar|deber[ií]a\s*comprar)\b'
+      signal_strength: "high"
+
+# ---------------------------------------------------------------------------
+# SEÑALES GEOGRÁFICAS
+# ---------------------------------------------------------------------------
+geographic_signals:
+
+  # Ciudades principales
+  cities:
+    - pattern: '\b(madrid|barcelona|valencia|sevilla|bilbao|zaragoza)\b'
+      signal_strength: "medium"
+    
+  # Regiones
+  regions:
+    - pattern: '\b(espa[nñ]a|spanish|peninsular)\b'
+      signal_strength: "high"
+    - pattern: '\b(europa|european|eu)\b'
+      signal_strength: "medium"
+    - pattern: '\b(canarias|baleares)\b'
+      signal_strength: "medium"
+      notes: "Zonas con fiscalidad especial"
+
+  # Envío
+  shipping:
+    - pattern: '\b(env[ií]o\s*gratis|free\s*shipping)\b'
+      signal_strength: "medium"
+    - pattern: '\b(gastos\s*de\s*env[ií]o)\b'
+      signal_strength: "medium"
+    - pattern: '\b(aduanas|aranceles|impuestos)\b'
+      signal_strength: "high"
+      notes: "Preocupación por importación"
+    - pattern: '\b(iva\s*incluido|sin\s*iva)\b'
+      signal_strength: "medium"
+    - pattern: '\b(garant[ií]a\s*europea|garant[ií]a\s*en\s*espa[nñ]a)\b'
+      signal_strength: "high"
+      notes: "Importante para productos chinos"
+
+# ---------------------------------------------------------------------------
+# PONDERACIÓN DE SEÑALES
+# ---------------------------------------------------------------------------
+signal_weights:
+  high: 3
+  medium: 2
+  low: 1
+
+# Umbral para considerar alta intención de compra
+high_intent_threshold: 5  # Suma de pesos >= 5
