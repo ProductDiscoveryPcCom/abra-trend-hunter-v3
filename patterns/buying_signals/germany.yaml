@@ -1,0 +1,179 @@
+# =============================================================================
+# SEÑALES DE INTENCIÓN DE COMPRA: ALEMANIA 🇩🇪
+# =============================================================================
+
+country_code: "DE"
+country_name: "Alemania"
+language: "de"
+priority: 5
+last_updated: "2024-12-04"
+
+# ---------------------------------------------------------------------------
+# RETAILERS Y TIENDAS
+# ---------------------------------------------------------------------------
+retailers:
+
+  tier1:
+    - pattern: '\b(amazon\.de|amazon\s*deutschland)\b'
+      name: "Amazon Alemania"
+      type: "marketplace"
+    
+    - pattern: '\b(mindfactory)\b'
+      name: "Mindfactory"
+      type: "specialist"
+      notes: "Principal retailer hardware gaming"
+    
+    - pattern: '\b(alternate)\b'
+      name: "Alternate"
+      type: "specialist"
+      notes: "Muy fuerte en hardware"
+    
+    - pattern: '\b(mediamarkt|media\s*markt)\b'
+      name: "MediaMarkt"
+      type: "electronics"
+      notes: "Origen alemán"
+    
+    - pattern: '\b(saturn)\b'
+      name: "Saturn"
+      type: "electronics"
+      notes: "Grupo MediaMarkt"
+
+  tier2:
+    - pattern: '\b(caseking)\b'
+      name: "Caseking"
+      type: "specialist"
+      notes: "Especialista modding/gaming"
+    
+    - pattern: '\b(notebooksbilliger|nbb)\b'
+      name: "Notebooksbilliger"
+      type: "specialist"
+    
+    - pattern: '\b(cyberport)\b'
+      name: "Cyberport"
+      type: "specialist"
+    
+    - pattern: '\b(computeruniverse)\b'
+      name: "Computeruniverse"
+      type: "specialist"
+    
+    - pattern: '\b(jacob\s*elektronik|jacob\.de)\b'
+      name: "Jacob Elektronik"
+      type: "specialist"
+    
+    - pattern: '\b(hardwareversand)\b'
+      name: "Hardwareversand"
+      type: "specialist"
+
+  tier3:
+    - pattern: '\b(ebay\s*kleinanzeigen|ebay\.de)\b'
+      name: "eBay Kleinanzeigen"
+      type: "secondhand"
+    
+    - pattern: '\b(aliexpress)\b'
+      name: "AliExpress"
+      type: "china_marketplace"
+    
+    - pattern: '\b(otto)\b'
+      name: "Otto"
+      type: "department"
+    
+    - pattern: '\b(conrad)\b'
+      name: "Conrad"
+      type: "electronics"
+
+# ---------------------------------------------------------------------------
+# FRASES DE INTENCIÓN DE COMPRA
+# ---------------------------------------------------------------------------
+buying_phrases:
+
+  where_to_buy:
+    - pattern: '\b(wo\s*kaufen|wo\s*bestellen)\b'
+      signal_strength: "high"
+    - pattern: '\b(wo\s*finden|wo\s*bekomme\s*ich)\b'
+      signal_strength: "medium"
+    - pattern: '\b(bester\s*shop|beste\s*seite\s*zum\s*kaufen)\b'
+      signal_strength: "high"
+    - pattern: '\b(kaufen\s*in\s*deutschland)\b'
+      signal_strength: "high"
+    - pattern: '\b(verf[üu]gbar\s*in\s*deutschland)\b'
+      signal_strength: "high"
+    - pattern: '\b(lieferung\s*nach\s*deutschland)\b'
+      signal_strength: "high"
+    - pattern: '\b(versand\s*deutschland)\b'
+      signal_strength: "high"
+
+  price_related:
+    - pattern: '\b(was\s*kostet|wie\s*viel\s*kostet)\b'
+      signal_strength: "high"
+    - pattern: '\b(preis\s*in\s*deutschland)\b'
+      signal_strength: "high"
+    - pattern: '\b(lohnt\s*sich)\b'
+      signal_strength: "medium"
+    - pattern: '\b(preis-?leistung)\b'
+      signal_strength: "medium"
+    - pattern: '\b(g[üu]nstig|billig|preiswert)\b'
+      signal_strength: "low"
+    - pattern: '\b([0-9]+\s*€|€\s*[0-9]+|euro)\b'
+      signal_strength: "low"
+    - pattern: '\b(angebot|rabatt|aktion)\b'
+      signal_strength: "low"
+
+  availability:
+    - pattern: '\b(auf\s*lager|verf[üu]gbar|lieferbar)\b'
+      signal_strength: "high"
+    - pattern: '\b(ausverkauft|nicht\s*verf[üu]gbar)\b'
+      signal_strength: "high"
+      notes: "Señal de alta demanda"
+    - pattern: '\b(wann\s*verf[üu]gbar|wann\s*lieferbar)\b'
+      signal_strength: "high"
+    - pattern: '\b(erscheinungsdatum|release\s*datum)\b'
+      signal_strength: "medium"
+    - pattern: '\b(vorbestell|pre-?order)\b'
+      signal_strength: "high"
+
+  decision_making:
+    - pattern: '\b(welches\s*kaufen|was\s*kaufen)\b'
+      signal_strength: "high"
+    - pattern: '\b(beste\s*wahl|beste\s*option)\b'
+      signal_strength: "medium"
+    - pattern: '\b(empfehlt\s*ihr|k[öo]nnt\s*ihr\s*empfehlen)\b'
+      signal_strength: "high"
+    - pattern: '\b(meinungen|erfahrungen)\b'
+      signal_strength: "medium"
+    - pattern: '\b(soll\s*ich\s*kaufen|sollte\s*ich\s*kaufen)\b'
+      signal_strength: "high"
+
+# ---------------------------------------------------------------------------
+# SEÑALES GEOGRÁFICAS
+# ---------------------------------------------------------------------------
+geographic_signals:
+
+  cities:
+    - pattern: '\b(berlin|m[üu]nchen|hamburg|k[öo]ln|frankfurt|d[üu]sseldorf)\b'
+      signal_strength: "medium"
+
+  regions:
+    - pattern: '\b(deutschland|deutsch|germany|german)\b'
+      signal_strength: "high"
+    - pattern: '\b(europa|europ[äa]isch)\b'
+      signal_strength: "medium"
+    - pattern: '\b([öo]sterreich|schweiz)\b'
+      signal_strength: "medium"
+      notes: "Mercados DACH relacionados"
+
+  shipping:
+    - pattern: '\b(versandkostenfrei|gratis\s*versand)\b'
+      signal_strength: "medium"
+    - pattern: '\b(zoll|einfuhrumsatzsteuer)\b'
+      signal_strength: "high"
+    - pattern: '\b(mwst\s*inklusive|inkl\s*mwst)\b'
+      signal_strength: "medium"
+    - pattern: '\b(eu\s*garantie|garantie\s*deutschland)\b'
+      signal_strength: "high"
+
+signal_weights:
+  high: 3
+  medium: 2
+  low: 1
+
+high_intent_threshold: 5
