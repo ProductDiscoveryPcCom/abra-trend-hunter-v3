@@ -1,0 +1,156 @@
+# =============================================================================
+# PATRONES DE DETECCIÓN: CPUs y PROCESADORES
+# =============================================================================
+#
+# Incluye: Desktop, HEDT, Server, Mobile, Apple Silicon
+# Enfoque especial en nuevas generaciones y productos emergentes
+# =============================================================================
+
+category: "CPU"
+description: "Procesadores para desktop, portátil y servidor"
+last_updated: "2024-12-04"
+
+patterns:
+
+  # ---------------------------------------------------------------------------
+  # AMD Ryzen - Desktop (AM5)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Ryzen)\s*(9|7|5|3)\s*(9[0-9]{3}|8[0-9]{3}|7[0-9]{3})(X3D|X|)\b'
+    examples: ["Ryzen 9 9950X", "Ryzen 7 9800X3D", "Ryzen 5 9600X", "Ryzen 9 7950X3D"]
+    priority: 1
+    brand: "AMD"
+    platform: "AM5"
+    notes: "Zen 5 (9000) y Zen 4 (7000) - generaciones actuales"
+
+  - regex: '\b(Ryzen)\s*(9|7|5|3)\s*(5[0-9]{3}|3[0-9]{3})(X|G|)\b'
+    examples: ["Ryzen 9 5950X", "Ryzen 7 5800X3D", "Ryzen 5 5600G"]
+    priority: 2
+    brand: "AMD"
+    platform: "AM4"
+    notes: "Zen 3 - aún muy popular"
+
+  # ---------------------------------------------------------------------------
+  # AMD Ryzen - APUs (con gráficos integrados)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Ryzen)\s*(AI)?\s*(9|7|5|3)\s*(8[0-9]{3}|7[0-9]{3})(HS|HX|U|G)\b'
+    examples: ["Ryzen AI 9 HX 370", "Ryzen 7 8845HS", "Ryzen 5 8600G"]
+    priority: 1
+    brand: "AMD"
+    notes: "APUs con RDNA integrada - muy relevantes para mini PCs"
+
+  # ---------------------------------------------------------------------------
+  # AMD EPYC (Servidor - importante para tendencias enterprise)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(EPYC)\s*([0-9]{4}[A-Z]*)\b'
+    examples: ["EPYC 9654", "EPYC 9754", "EPYC 4584PX"]
+    priority: 2
+    brand: "AMD"
+    segment: "Server"
+
+  # ---------------------------------------------------------------------------
+  # AMD Threadripper (HEDT/Workstation)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Threadripper)\s*(PRO)?\s*([0-9]{4}[A-Z]*)\b'
+    examples: ["Threadripper PRO 7995WX", "Threadripper 7980X"]
+    priority: 2
+    brand: "AMD"
+    segment: "HEDT"
+
+  # ---------------------------------------------------------------------------
+  # Intel Core Ultra (Nueva arquitectura - MÁXIMA PRIORIDAD)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Core)\s*(Ultra)\s*(9|7|5)\s*(2[0-9]{2}[A-Z]*)\b'
+    examples: ["Core Ultra 9 285K", "Core Ultra 7 265K", "Core Ultra 5 245K"]
+    priority: 1
+    brand: "Intel"
+    generation: "Arrow Lake"
+    notes: "Nueva arquitectura 2024 - muy importante"
+
+  - regex: '\b(Core)\s*(Ultra)\s*(9|7|5)\s*(1[0-9]{2}[A-Z]*)\b'
+    examples: ["Core Ultra 9 185H", "Core Ultra 7 155H", "Core Ultra 5 125H"]
+    priority: 1
+    brand: "Intel"
+    generation: "Meteor Lake"
+    notes: "Primera gen Core Ultra - móvil principalmente"
+
+  # ---------------------------------------------------------------------------
+  # Intel Core (Generaciones recientes)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Core)\s*(i9|i7|i5|i3)[-\s]*(1[4-5][0-9]{3}[A-Z]*)\b'
+    examples: ["Core i9-14900K", "Core i7-14700K", "Core i5-14600K", "Core i9-13900KS"]
+    priority: 1
+    brand: "Intel"
+    generation: "Raptor Lake"
+
+  - regex: '\b(Core)\s*(i9|i7|i5|i3)[-\s]*(1[2-3][0-9]{3}[A-Z]*)\b'
+    examples: ["Core i9-12900K", "Core i7-12700K"]
+    priority: 2
+    brand: "Intel"
+    generation: "Alder Lake"
+
+  # ---------------------------------------------------------------------------
+  # Intel N-Series (Entry level - muy populares en mini PCs baratos)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Intel)\s*(N[0-9]{3}|N[0-9]{4})\b'
+    examples: ["Intel N100", "Intel N95", "Intel N200", "Intel N305"]
+    priority: 1
+    brand: "Intel"
+    segment: "Entry"
+    notes: "MUY IMPORTANTE - dominan el mercado de mini PCs económicos"
+
+  - regex: '\b(Celeron|Pentium)\s*(N[0-9]{4}|G[0-9]{4}|J[0-9]{4})\b'
+    examples: ["Celeron N5105", "Pentium G7400"]
+    priority: 2
+    brand: "Intel"
+    segment: "Entry"
+
+  # ---------------------------------------------------------------------------
+  # Intel Xeon (Servidor)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Xeon)\s*(W|E|Gold|Silver|Platinum)[-\s]*([0-9]{4}[A-Z]*)\b'
+    examples: ["Xeon W-3495X", "Xeon Gold 6548Y+", "Xeon E-2388G"]
+    priority: 2
+    brand: "Intel"
+    segment: "Server/Workstation"
+
+  # ---------------------------------------------------------------------------
+  # Apple Silicon (Importante para tendencias)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(M[1-4])\s*(Pro|Max|Ultra)?\b'
+    examples: ["M4 Pro", "M3 Max", "M2 Ultra", "M1"]
+    priority: 1
+    brand: "Apple"
+    notes: "Importante para contexto de mercado"
+
+  # ---------------------------------------------------------------------------
+  # Qualcomm (Nuevo en PCs - importante monitorear)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Snapdragon)\s*(X)\s*(Elite|Plus|Pro)?\b'
+    examples: ["Snapdragon X Elite", "Snapdragon X Plus"]
+    priority: 1
+    brand: "Qualcomm"
+    notes: "Nueva competencia ARM en PCs - muy importante detectar"
+
+  - regex: '\b(Snapdragon)\s*(8)\s*(Gen\s*[1-3]|s\s*Gen\s*[1-3])\b'
+    examples: ["Snapdragon 8 Gen 3", "Snapdragon 8s Gen 3"]
+    priority: 2
+    brand: "Qualcomm"
+    segment: "Mobile"
+
+  # ---------------------------------------------------------------------------
+  # MediaTek (Emergente en Chromebooks y tablets)
+  # ---------------------------------------------------------------------------
+  - regex: '\b(Dimensity)\s*([0-9]{4})\b'
+    examples: ["Dimensity 9300", "Dimensity 8300"]
+    priority: 2
+    brand: "MediaTek"
+
+  - regex: '\b(Kompanio)\s*([0-9]{4})\b'
+    examples: ["Kompanio 1380"]
+    priority: 2
+    brand: "MediaTek"
+    notes: "Para Chromebooks"
+
+exclusions:
+  - '\bi[0-9]\b'  # Evitar "i5" solo sin contexto
+  - 'Core\s*[0-9]{1}\b'  # Evitar "Core 2" antiguo

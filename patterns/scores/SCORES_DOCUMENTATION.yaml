@@ -1,0 +1,419 @@
+# =============================================================================
+# DOCUMENTACIÓN DE ÍNDICES Y SCORES
+# =============================================================================
+#
+# Este documento explica todos los scores utilizados en Abra Trend Hunter,
+# incluyendo: definición, fórmula, rangos interpretativos y franja temporal.
+#
+# =============================================================================
+
+version: "2.0"
+last_updated: "2024-12-04"
+
+# =============================================================================
+# ÍNDICES PRINCIPALES
+# =============================================================================
+
+scores:
+
+  # ---------------------------------------------------------------------------
+  # BREAKOUT SCORE (Score principal de tendencia)
+  # ---------------------------------------------------------------------------
+  - id: "breakout_score"
+    name: "Breakout Score"
+    emoji: "🚀"
+    description: |
+      Mide la probabilidad de que un producto/keyword esté en punto de 
+      inflexión hacia una tendencia alcista. Combina señales de Google Trends
+      con la velocidad de crecimiento reciente.
+    
+    formula: |
+      breakout_score = (
+        trend_momentum × 0.40 +    # Crecimiento de Trends
+        acceleration × 0.30 +       # Aceleración del crecimiento
+        consistency × 0.20 +        # Estabilidad de la señal
+        volume_signal × 0.10        # Volumen de búsqueda base
+      ) × 100
+      
+      Donde:
+      - trend_momentum = (media_3m / media_12m) si media_12m > 0
+      - acceleration = (última_semana / media_mes) - 1
+      - consistency = 1 - (desviación_estándar / media)
+      - volume_signal = normalizado(volumen_estimado)
+    
+    timeframe: |
+      - **Datos primarios**: Últimos 12 meses de Google Trends
+      - **Ventana de momentum**: Últimos 3 meses vs. 12 meses
+      - **Ventana de aceleración**: Última semana vs. último mes
+      - **Actualización**: Semanal (Google Trends actualiza semanalmente)
+    
+    ranges:
+      - range: "90-100"
+        label: "Explosivo"
+        interpretation: "Tendencia en explosión. Actuar inmediatamente."
+        color: "#10B981"
+        
+      - range: "70-89"
+        label: "Breakout"
+        interpretation: "Tendencia en breakout claro. Alta prioridad."
+        color: "#22C55E"
+        
+      - range: "50-69"
+        label: "Emergente"
+        interpretation: "Tendencia emergente. Monitorear de cerca."
+        color: "#EAB308"
+        
+      - range: "30-49"
+        label: "Incipiente"
+        interpretation: "Señales tempranas. Investigar más."
+        color: "#F59E0B"
+        
+      - range: "0-29"
+        label: "Estable/Bajo"
+        interpretation: "Sin señales de breakout. Producto establecido o nicho."
+        color: "#6B7280"
+    
+    caveats:
+      - "Score alto no garantiza demanda; puede ser hype sin conversión"
+      - "Productos de nicho legítimos pueden tener score bajo"
+      - "Eventos puntuales (lanzamientos) pueden inflar temporalmente"
+
+  # ---------------------------------------------------------------------------
+  # TREND SCORE (Legacy - Google Trends puro)
+  # ---------------------------------------------------------------------------
+  - id: "trend_score"
+    name: "Trend Score"
+    emoji: "📈"
+    description: |
+      Score basado exclusivamente en datos de Google Trends.
+      Mide el nivel de interés de búsqueda relativo al pico histórico.
+    
+    formula: |
+      trend_score = (valor_actual / valor_máximo_periodo) × 100
+      
+      Ajustado por:
+      - Tendencia reciente (+/-10 puntos según dirección)
+      - Volatilidad (penaliza oscilaciones erráticas)
+    
+    timeframe: |
+      - **Período analizado**: Según configuración (default: 5 años)
+      - **Valor actual**: Media de últimas 4 semanas
+      - **Referencia**: Máximo histórico en el período
+    
+    ranges:
+      - range: "80-100"
+        label: "Pico"
+        interpretation: "En o cerca de máximos históricos de interés."
+        
+      - range: "60-79"
+        label: "Alto"
+        interpretation: "Interés significativamente por encima de la media."
+        
+      - range: "40-59"
+        label: "Medio"
+        interpretation: "Interés moderado, en línea con histórico."
+        
+      - range: "20-39"
+        label: "Bajo"
+        interpretation: "Interés por debajo de la media histórica."
+        
+      - range: "0-19"
+        label: "Mínimo"
+        interpretation: "Interés muy bajo o producto en declive."
+
+  # ---------------------------------------------------------------------------
+  # POTENTIAL SCORE (Potencial de crecimiento)
+  # ---------------------------------------------------------------------------
+  - id: "potential_score"
+    name: "Potential Score"
+    emoji: "⭐"
+    description: |
+      Estima el potencial de crecimiento futuro basándose en la 
+      distancia al máximo histórico y la trayectoria reciente.
+    
+    formula: |
+      potential_score = (
+        headroom × 0.50 +          # Margen hasta máximo histórico
+        growth_trajectory × 0.30 + # Trayectoria de crecimiento
+        recovery_signal × 0.20     # Señal de recuperación si venía cayendo
+      ) × 100
+      
+      Donde:
+      - headroom = 100 - (valor_actual / valor_máximo × 100)
+      - growth_trajectory = regresión_lineal(últimos_3m)
+      - recovery_signal = 1 si valle reciente + subida, 0 si no
+    
+    timeframe: |
+      - **Headroom**: Comparación con máximo de todo el período
+      - **Trayectoria**: Últimos 3 meses
+      - **Recovery**: Últimos 6 meses para detectar valles
+    
+    ranges:
+      - range: "80-100"
+        label: "Alto Potencial"
+        interpretation: "Mucho margen de crecimiento. Puede multiplicarse."
+        
+      - range: "60-79"
+        label: "Buen Potencial"
+        interpretation: "Margen significativo de crecimiento."
+        
+      - range: "40-59"
+        label: "Potencial Moderado"
+        interpretation: "Algo de margen pero limitado."
+        
+      - range: "0-39"
+        label: "Bajo Potencial"
+        interpretation: "Cerca de máximos o en declive sostenido."
+    
+    caveats:
+      - "Alto potencial puede significar que nunca recuperará el pico"
+      - "Combinar con Breakout Score para validar dirección"
+
+  # ---------------------------------------------------------------------------
+  # HYPE SCORE (Intensidad de contenido en YouTube)
+  # ---------------------------------------------------------------------------
+  - id: "hype_score"
+    name: "Hype Score"
+    emoji: "🔥"
+    description: |
+      Mide la intensidad del "hype" de un producto basándose en la 
+      velocidad de creación de contenido en YouTube relativo al tiempo
+      desde el primer video detectado.
+    
+    formula: |
+      videos_per_week = total_videos / weeks_since_first_video
+      
+      base_score = (
+        10 si videos_per_week < 0.5
+        30 si 0.5 <= videos_per_week < 1
+        50 si 1 <= videos_per_week < 2
+        70 si 2 <= videos_per_week < 5
+        90 si videos_per_week >= 5
+      )
+      
+      # Bonus por recencia
+      if videos_last_30_days >= 5:
+        hype_score = min(100, base_score + 20)
+      else:
+        hype_score = base_score
+    
+    timeframe: |
+      - **Período base**: Desde primer video detectado hasta hoy
+      - **Ventana de recencia**: Últimos 30 días
+      - **Datos de YouTube**: Hasta 50 videos por búsqueda
+    
+    ranges:
+      - range: "90-100"
+        label: "Exploding 🚀"
+        interpretation: |
+          Producto en explosión viral. Contenido masivo en poco tiempo.
+          - Típico de lanzamientos esperados
+          - Puede ser hype inflado o demanda real
+        
+      - range: "70-89"
+        label: "Hot 🔥"
+        interpretation: |
+          Producto muy activo. Alta frecuencia de contenido.
+          - Atención sostenida de creadores
+          - Buena señal de interés de mercado
+        
+      - range: "50-69"
+        label: "Warm 🌡️"
+        interpretation: |
+          Actividad moderada. Producto con tracción.
+          - Suficiente contenido para validar interés
+          - No es viral pero hay demanda
+        
+      - range: "30-49"
+        label: "Cooling ❄️"
+        interpretation: |
+          Actividad baja. Producto enfriándose o muy nicho.
+          - Puede ser producto maduro/establecido
+          - O nicho muy específico
+        
+      - range: "0-29"
+        label: "Cold 🧊"
+        interpretation: |
+          Muy poca actividad. Producto sin tracción.
+          - Puede ser muy nuevo aún
+          - O producto fallido/discontinuado
+    
+    caveats:
+      - "Hype alto no implica ventas; puede ser producto controvertido"
+      - "Productos chinos pueden tener menos cobertura en YouTube occidental"
+      - "Score puede estar sesgado por un solo creador prolífico"
+
+  # ---------------------------------------------------------------------------
+  # PRODUCT OPPORTUNITY SCORE (Score de oportunidad combinado)
+  # ---------------------------------------------------------------------------
+  - id: "product_opportunity_score"
+    name: "Product Opportunity Score"
+    emoji: "🎯"
+    description: |
+      Score compuesto que combina múltiples señales para estimar la 
+      oportunidad de producto desde la perspectiva de un retailer.
+      Diseñado específicamente para decisiones de compra de stock.
+    
+    formula: |
+      product_opportunity_score = (
+        hype_component +           # Máx 30 puntos
+        buying_intent_component +  # Máx 25 puntos
+        market_coverage_component +# Máx 25 puntos
+        niche_activity_component   # Máx 20 puntos
+      )
+      
+      Donde:
+      - hype_component = hype_score × 0.30
+      - buying_intent_component:
+          +15 si where_to_buy >= 3 señales
+          +10 si where_to_buy >= 1
+          +10 si europe_mentions >= 2
+          +5 si europe_mentions >= 1
+      - market_coverage_component = mercados_objetivo_cubiertos × 5
+      - niche_activity_component = min(20, budget_alternatives × 4)
+    
+    timeframe: |
+      - **Hype**: Basado en YouTube (ver Hype Score)
+      - **Buying Intent**: Análisis de videos últimos 30-90 días
+      - **Market Coverage**: Idiomas detectados en videos
+      - **Niche Activity**: Alternativas budget mencionadas
+    
+    ranges:
+      - range: "80-100"
+        label: "Oportunidad Excelente"
+        interpretation: |
+          Producto con todas las señales alineadas:
+          - Alto hype + demanda de compra + cobertura de mercado
+          - ACCIÓN: Priorizar para análisis de compra
+        
+      - range: "60-79"
+        label: "Buena Oportunidad"
+        interpretation: |
+          Señales positivas en mayoría de dimensiones.
+          - ACCIÓN: Incluir en shortlist, investigar más
+        
+      - range: "40-59"
+        label: "Oportunidad Moderada"
+        interpretation: |
+          Algunas señales positivas, otras débiles o ausentes.
+          - ACCIÓN: Monitorear, puede mejorar
+        
+      - range: "20-39"
+        label: "Oportunidad Baja"
+        interpretation: |
+          Pocas señales positivas.
+          - ACCIÓN: Solo si hay razón estratégica específica
+        
+      - range: "0-19"
+        label: "Sin Oportunidad Clara"
+        interpretation: |
+          Sin señales que justifiquen inversión.
+          - ACCIÓN: Descartar o investigar por qué
+    
+    caveats:
+      - "Depende de calidad de datos de YouTube"
+      - "Productos muy nuevos pueden puntuar bajo por falta de contenido"
+      - "Productos B2B pueden tener menos presencia en YouTube"
+
+  # ---------------------------------------------------------------------------
+  # BUYING INTENT SCORE (Intención de compra)
+  # ---------------------------------------------------------------------------
+  - id: "buying_intent_score"
+    name: "Buying Intent Score"
+    emoji: "🛒"
+    description: |
+      Mide las señales explícitas de intención de compra detectadas
+      en contenido de YouTube, especialmente para mercados europeos.
+    
+    formula: |
+      buying_intent_score = suma de señales ponderadas
+      
+      Peso por tipo de señal:
+      - "where_to_buy" (dónde comprar): 3 puntos
+      - "price" (precio): 2 puntos
+      - "availability" (disponibilidad): 2 puntos
+      - "europe" (menciones Europa): 3 puntos
+      
+      Normalizado a 0-100 basado en umbral de 15 señales = 100
+    
+    timeframe: |
+      - **Fuente**: Títulos y descripciones de videos de YouTube
+      - **Período**: Videos incluidos en búsqueda (típicamente últimos 12m)
+    
+    ranges:
+      - range: "70-100"
+        label: "Alta Intención"
+        interpretation: |
+          Demanda activa y explícita. Usuarios buscando comprar.
+        
+      - range: "40-69"
+        label: "Intención Moderada"
+        interpretation: |
+          Interés en compra pero no urgente/masivo.
+        
+      - range: "0-39"
+        label: "Baja Intención"
+        interpretation: |
+          Interés informativo más que transaccional.
+
+  # ---------------------------------------------------------------------------
+  # CONTENT FRESHNESS SCORE (Frescura de contenido)
+  # ---------------------------------------------------------------------------
+  - id: "content_freshness"
+    name: "Content Freshness"
+    emoji: "🕐"
+    description: |
+      Evalúa qué tan reciente es el contenido disponible sobre el producto.
+      Indicador de si el producto sigue siendo relevante.
+    
+    formula: |
+      Basado en videos en ventanas de tiempo:
+      - "very_fresh": 5+ videos en últimos 30 días
+      - "fresh": 2+ videos en 30d O 10+ en 90d
+      - "aging": 3+ videos en 90d
+      - "stale": Menos de 3 videos en 90d
+    
+    timeframe: |
+      - **Ventana primaria**: Últimos 30 días
+      - **Ventana secundaria**: Últimos 90 días
+    
+    ranges:
+      - value: "very_fresh"
+        label: "🟢 Muy Activo"
+        interpretation: "Contenido constante. Producto en auge."
+        
+      - value: "fresh"
+        label: "🟡 Activo"
+        interpretation: "Contenido reciente. Producto relevante."
+        
+      - value: "aging"
+        label: "🟠 Envejeciendo"
+        interpretation: "Contenido desacelerando. Monitorear."
+        
+      - value: "stale"
+        label: "🔴 Estancado"
+        interpretation: "Poco contenido reciente. Producto maduro o en declive."
+
+# =============================================================================
+# NOTAS GENERALES
+# =============================================================================
+
+general_notes:
+  - title: "Combinación de Scores"
+    content: |
+      Los scores están diseñados para usarse en conjunto:
+      - Breakout Score + Potential Score = Oportunidad de tendencia
+      - Hype Score + Buying Intent = Validación de demanda
+      - Product Opportunity = Score integrador para decisiones
+  
+  - title: "Limitaciones de Datos"
+    content: |
+      - Google Trends: Datos relativos, no absolutos
+      - YouTube: Limitado a 50 videos por búsqueda, quota de API
+      - Idiomas: Detección heurística, no 100% precisa
+  
+  - title: "Frecuencia de Actualización"
+    content: |
+      - Google Trends: Actualiza semanalmente
+      - YouTube: Datos en tiempo real pero quota limitada
+      - Recomendación: Análisis completo semanal, spot checks diarios
